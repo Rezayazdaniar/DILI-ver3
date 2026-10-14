@@ -25,6 +25,7 @@ import {
   Stethoscope,
 } from 'lucide-react';
 import { Header } from './components/Header';
+import { LandingPage } from './components/LandingPage';
 import { InputPanel } from './components/InputPanel';
 import { DrugExplorer } from './components/DrugExplorer';
 import { CoreAssessmentGrid } from './components/CoreAssessmentGrid';
@@ -33,10 +34,12 @@ import { CausalityRucamCard } from './components/CausalityRucamCard';
 import { EvidenceExplanationCard } from './components/EvidenceExplanationCard';
 import { KnowledgeGraphView } from './components/KnowledgeGraphView';
 import { SystemStatusModal } from './components/SystemStatusModal';
+import { LocalLlmModal } from './components/LocalLlmModal';
 import { DRUG_CATALOG } from './data/drugCatalog';
 import { LabValues, PatientClinicalContext } from './types/clinical';
 import { DiliAssessmentResponse } from './types/dili-explanation';
 import { DrugCatalogEntry } from './types/dili-evidence';
+import { getStoredLlmConfig, LocalLlmConfig } from './types/llm-config';
 import { diliApi } from './lib/api';
 import { generateEvidenceGroundedExplanation } from './lib/dili-explanation-api';
 
@@ -74,8 +77,12 @@ export default function App() {
   const [context, setContext] = useState<PatientClinicalContext>(INITIAL_PATIENT_CONTEXT);
   const [assessment, setAssessment] = useState<DiliAssessmentResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'explorer' | 'assessment' | 'graph' | 'evidence'>('explorer');
+  const [activeTab, setActiveTab] = useState<'landing' | 'explorer' | 'assessment' | 'graph' | 'evidence'>('landing');
   const [isSystemModalOpen, setIsSystemModalOpen] = useState(false);
+  const [isLocalLlmModalOpen, setIsLocalLlmModalOpen] = useState(false);
+  const [isLocalLlmActive, setIsLocalLlmActive] = useState<boolean>(() => {
+    return getStoredLlmConfig().isEnabled;
+  });
 
   // Run assessment on inputs change or drug change
   const triggerAssessment = async (
@@ -195,6 +202,14 @@ export default function App() {
     setActiveTab('assessment');
   };
 
+  const handleLlmConfigSaved = (config: LocalLlmConfig) => {
+    setIsLocalLlmActive(config.isEnabled);
+    // Re-generate explanation with new LLM config
+    if (assessment) {
+      triggerAssessment();
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -206,14 +221,26 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenSystemModal={() => setIsSystemModalOpen(true)}
+        onOpenLocalLlmModal={() => setIsLocalLlmModalOpen(true)}
         onPrintReport={handlePrint}
         activeDrugName={selectedDrug?.standardName}
         activeDrugCategory={selectedDrug?.livertoxCategory}
+        isLocalLlmActive={isLocalLlmActive}
       />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Tab 1: LiverTox Drug Explorer (New Primary Feature) */}
+        {/* Tab 0: Tailored Landing Page */}
+        {activeTab === 'landing' && (
+          <LandingPage
+            onStartExplorer={() => setActiveTab('explorer')}
+            onStartAssessment={() => setActiveTab('assessment')}
+            onOpenLocalLlmModal={() => setIsLocalLlmModalOpen(true)}
+            isLocalLlmActive={isLocalLlmActive}
+          />
+        )}
+
+        {/* Tab 1: LiverTox Drug Explorer */}
         {activeTab === 'explorer' && (
           <DrugExplorer
             onSelectAndAssessDrug={handleSelectAndAssessDrug}
@@ -238,7 +265,7 @@ export default function App() {
             {/* Core Assessment Grid: 3 Fundamental cards */}
             <CoreAssessmentGrid assessment={assessment} />
 
-            {/* Clinical Interpretation: Meaning and actions without repeating raw values */}
+            {/* Clinical Interpretation: Meaning, actions, and Hy's Law Scatter Plot */}
             <ClinicalInterpretationCard assessment={assessment} />
 
             {/* Causality Scoring (RUCAM): Itemized breakdown */}
@@ -294,6 +321,13 @@ export default function App() {
         onClose={() => setIsSystemModalOpen(false)}
       />
 
+      {/* Local Qwen 8B Configuration Modal */}
+      <LocalLlmModal
+        isOpen={isLocalLlmModalOpen}
+        onClose={() => setIsLocalLlmModalOpen(false)}
+        onConfigSaved={handleLlmConfigSaved}
+      />
+
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -308,7 +342,7 @@ export default function App() {
             <span>•</span>
             <span>الگوریتم علیت: CIOMS / RUCAM</span>
             <span>•</span>
-            <span>راهنمای پیش از بازاریابی FDA (2009)</span>
+            <span>پشتیبانی از مدل محلی Qwen 8B</span>
           </div>
         </div>
       </footer>

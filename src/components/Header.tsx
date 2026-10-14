@@ -7,6 +7,7 @@ import React from 'react';
 import {
   Activity,
   BookOpen,
+  Bot,
   CheckCircle2,
   ChevronRight,
   Compass,
@@ -14,6 +15,7 @@ import {
   Dna,
   Download,
   ExternalLink,
+  Home,
   Layers,
   Network,
   Printer,
@@ -24,21 +26,25 @@ import {
 } from 'lucide-react';
 
 interface HeaderProps {
-  activeTab: 'explorer' | 'assessment' | 'graph' | 'evidence';
-  onTabChange: (tab: 'explorer' | 'assessment' | 'graph' | 'evidence') => void;
+  activeTab: 'landing' | 'explorer' | 'assessment' | 'graph' | 'evidence';
+  onTabChange: (tab: 'landing' | 'explorer' | 'assessment' | 'graph' | 'evidence') => void;
   onOpenSystemModal: () => void;
+  onOpenLocalLlmModal: () => void;
   onPrintReport: () => void;
   activeDrugName?: string;
   activeDrugCategory?: string;
+  isLocalLlmActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onTabChange,
   onOpenSystemModal,
+  onOpenLocalLlmModal,
   onPrintReport,
   activeDrugName,
   activeDrugCategory,
+  isLocalLlmActive,
 }) => {
   return (
     <header className="border-b border-slate-200/90 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-xs transition-colors">
@@ -82,8 +88,11 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between py-3 gap-3">
           {/* Logo & Product Title */}
-          <div className="flex items-center gap-3.5">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-700 via-teal-600 to-cyan-500 p-0.5 shadow-md shadow-teal-700/10 flex items-center justify-center shrink-0">
+          <div
+            onClick={() => onTabChange('landing')}
+            className="flex items-center gap-3.5 cursor-pointer group"
+          >
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-teal-700 via-teal-600 to-cyan-500 p-0.5 shadow-md shadow-teal-700/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
                 <Dna className="w-6 h-6 text-teal-700" />
               </div>
@@ -106,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Active Drug Indicator & Actions */}
           <div className="flex items-center gap-2.5">
-            {activeDrugName && (
+            {activeDrugName && activeTab !== 'landing' && (
               <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs">
                 <span className="text-slate-500 font-medium">داروی فعال:</span>
                 <span className="font-extrabold text-teal-800">{activeDrugName}</span>
@@ -118,6 +127,27 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
 
+            {/* Local LLM Server Config Button */}
+            <button
+              onClick={onOpenLocalLlmModal}
+              title="پیکربندی اتصال مدل زبانی محلی Qwen 8B"
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border transition cursor-pointer font-bold ${
+                isLocalLlmActive
+                  ? 'bg-purple-50 text-purple-900 border-purple-300 hover:bg-purple-100'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+              }`}
+            >
+              <Bot className="w-4 h-4 text-purple-600" />
+              <span className="hidden sm:inline">سرور محلی Qwen 8B</span>
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isLocalLlmActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
+                }`}
+                title={isLocalLlmActive ? 'مدل محلی فعال است' : 'مدل محلی غیرفعال'}
+              />
+            </button>
+
+            {/* System Status Button */}
             <button
               onClick={onOpenSystemModal}
               title="مشاهده وضعیت استقرار سرور و سرویس‌های systemd"
@@ -130,6 +160,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </button>
 
+            {/* Print Button */}
             <button
               onClick={onPrintReport}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shadow-sm shadow-teal-700/20 transition cursor-pointer"
@@ -142,7 +173,20 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Sophisticated UI Navigation Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-2 border-t border-slate-100 text-xs sm:text-sm">
-          {/* Tab 1: Drug Explorer (Featured New Module) */}
+          {/* Tab 0: Landing Page (Home) */}
+          <button
+            onClick={() => onTabChange('landing')}
+            className={`px-3.5 py-2 rounded-xl font-extrabold transition-all flex items-center gap-2 cursor-pointer shrink-0 border ${
+              activeTab === 'landing'
+                ? 'bg-slate-900 text-white border-slate-900 shadow-sm shadow-slate-900/20'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            <Home className="w-4 h-4" />
+            <span>صفحه اصلی (معرفی پلتفرم)</span>
+          </button>
+
+          {/* Tab 1: Drug Explorer (Featured Module) */}
           <button
             onClick={() => onTabChange('explorer')}
             className={`px-3.5 py-2 rounded-xl font-extrabold transition-all flex items-center gap-2 cursor-pointer shrink-0 border ${

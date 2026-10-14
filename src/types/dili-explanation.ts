@@ -99,7 +99,7 @@ export interface DiliAssessmentResponse {
   explanation?: {
     narrativeFa: string;
     groundedSources: string[];
-    generatedBy: 'GEMINI_SERVER' | 'DETERMINISTIC_SYNTHESIZER';
+    generatedBy: 'LOCAL_QWEN_LLM' | 'GEMINI_SERVER' | 'DETERMINISTIC_SYNTHESIZER';
     confidence: 'HIGH' | 'MODERATE' | 'CAUTION';
   };
 }

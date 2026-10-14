@@ -112,27 +112,31 @@ export const EvidenceExplanationCard: React.FC<EvidenceExplanationCardProps> = (
       {activeTab === 'narrative' && (
         <div className="space-y-4">
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 relative overflow-hidden">
-            <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200">
+              <div className="flex flex-wrap items-center gap-2">
                 <Sparkles className="w-4 h-4 text-purple-600" />
                 <span className="text-xs font-bold text-slate-800">
-                  سنتز شواهد تحت سیاست پرامپت DILI Navigator:
+                  سنتز شواهد با مدل محلی پروژه (Qwen 8B Engine):
                 </span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-white border border-slate-200 text-teal-700 font-bold">
-                  {explanation?.generatedBy === 'GEMINI_SERVER'
-                    ? 'Gemini 2.5 Server'
-                    : 'Deterministic Synthesizer'}
+                <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-300 font-bold flex items-center gap-1.5 shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-600 animate-pulse"></span>
+                  <span>Qwen2.5-7B/8B Local (Port 8001)</span>
                 </span>
               </div>
 
-              <button
-                onClick={handleRegenerate}
-                disabled={isGenerating}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-100 text-xs text-slate-700 font-semibold transition cursor-pointer border border-slate-200 disabled:opacity-50 shadow-xs"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 text-purple-600 ${isGenerating ? 'animate-spin' : ''}`} />
-                <span>{isGenerating ? 'در حال بازتولید...' : 'بازتولید تحلیل'}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-slate-500 font-mono hidden sm:inline">
+                  vLLM • Temp: 0.0 • 512 Tokens
+                </span>
+                <button
+                  onClick={handleRegenerate}
+                  disabled={isGenerating}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-100 text-xs text-slate-700 font-semibold transition cursor-pointer border border-slate-200 disabled:opacity-50 shadow-xs"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 text-purple-600 ${isGenerating ? 'animate-spin' : ''}`} />
+                  <span>{isGenerating ? 'در حال بازتولید...' : 'بازتولید تحلیل با Qwen'}</span>
+                </button>
+              </div>
             </div>
 
             <div className="text-xs sm:text-sm leading-relaxed text-slate-800 whitespace-pre-line space-y-3 font-sans">
