@@ -30,13 +30,12 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(graph.nodes[0] || null);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  // Position nodes radially or linearly for a clean, deterministic, interactive layout
   const width = 800;
   const height = 480;
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // Assign coordinate positions based on node types
+  // Position nodes based on node types
   const nodePositions = React.useMemo(() => {
     const posMap: Record<string, { x: number; y: number }> = {};
 
@@ -49,7 +48,7 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
     // Drug class node: top
     const classNode = graph.nodes.find((n) => n.type === 'drug_class');
     if (classNode) {
-      posMap[classNode.id] = { x: centerX, y: centerY - 150 };
+      posMap[classNode.id] = { x: centerX, y: centerY - 140 };
     }
 
     // Synonyms: left side
@@ -83,48 +82,48 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
   }, [graph, centerX, centerY]);
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          <div className="p-2.5 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-200">
             <Network className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-base font-bold text-slate-900">
                 کاوشگر گراف دانش دارویی (Drug Knowledge Graph)
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 font-mono">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-cyan-800 font-mono font-bold">
                 Graph Schema v1.2
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               نمایش روابط معنایی، نگاشت به گروه دارویی و تمایز شواهد سطح دارو از شواهد سطح کالس
             </p>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+        <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-600 font-medium">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block" />
             <span>دارو</span>
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-violet-400 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block" />
             <span>گروه دارویی</span>
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
             <span>نام تجاری</span>
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" />
             <span>سند شواهد</span>
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block" />
             <span>مورد بالینی</span>
           </span>
         </div>
@@ -132,23 +131,23 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
 
       {/* Graph Visual Area */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* SVG Canvas */}
-        <div className="lg:col-span-3 bg-slate-950 rounded-xl border border-slate-800 relative overflow-hidden h-[450px] flex items-center justify-center">
+        {/* SVG Canvas with subtle grid */}
+        <div className="lg:col-span-3 bg-slate-50/70 bg-biotech-grid rounded-xl border border-slate-200 relative overflow-hidden h-[450px] flex items-center justify-center">
           {/* Zoom Controls */}
-          <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-slate-900/80 backdrop-blur-sm p-1 rounded-lg border border-slate-700/80 z-20">
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-white/95 shadow-xs p-1 rounded-lg border border-slate-200 z-20">
             <button
               onClick={() => setZoomLevel((z) => Math.min(z + 0.15, 1.6))}
-              className="p-1 hover:bg-slate-800 rounded text-slate-300 cursor-pointer"
+              className="p-1 hover:bg-slate-100 rounded text-slate-700 cursor-pointer"
               title="بزرگ‌نمایی"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
-            <span className="text-[10px] font-mono px-1 text-slate-400">
+            <span className="text-[10px] font-mono px-1 text-slate-600 font-bold">
               {Math.round(zoomLevel * 100)}%
             </span>
             <button
               onClick={() => setZoomLevel((z) => Math.max(z - 0.15, 0.7))}
-              className="p-1 hover:bg-slate-800 rounded text-slate-300 cursor-pointer"
+              className="p-1 hover:bg-slate-100 rounded text-slate-700 cursor-pointer"
               title="کوچک‌نمایی"
             >
               <ZoomOut className="w-4 h-4" />
@@ -162,24 +161,24 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
           >
             <defs>
               <marker
-                id="arrowhead"
+                id="arrowhead-light"
                 markerWidth="8"
                 markerHeight="6"
                 refX="18"
                 refY="3"
                 orient="auto"
               >
-                <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+                <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" />
               </marker>
               <marker
-                id="arrowhead-class"
+                id="arrowhead-class-light"
                 markerWidth="8"
                 markerHeight="6"
                 refX="18"
                 refY="3"
                 orient="auto"
               >
-                <polygon points="0 0, 8 3, 0 6" fill="#eab308" />
+                <polygon points="0 0, 8 3, 0 6" fill="#d97706" />
               </marker>
             </defs>
 
@@ -198,21 +197,21 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
                     y1={srcPos.y}
                     x2={tgtPos.x}
                     y2={tgtPos.y}
-                    stroke={isClassLevel ? '#eab308' : '#475569'}
+                    stroke={isClassLevel ? '#d97706' : '#cbd5e1'}
                     strokeWidth={isClassLevel ? 2 : 1.5}
                     strokeDasharray={isClassLevel ? '4 3' : undefined}
-                    markerEnd={isClassLevel ? 'url(#arrowhead-class)' : 'url(#arrowhead)'}
-                    className="transition-colors group-hover:stroke-teal-400"
+                    markerEnd={isClassLevel ? 'url(#arrowhead-class-light)' : 'url(#arrowhead-light)'}
+                    className="transition-colors group-hover:stroke-teal-600"
                   />
                   {/* Link Label */}
                   <text
                     x={(srcPos.x + tgtPos.x) / 2}
                     y={(srcPos.y + tgtPos.y) / 2 - 6}
-                    fill={isClassLevel ? '#facc15' : '#94a3b8'}
+                    fill={isClassLevel ? '#b45309' : '#64748b'}
                     fontSize="9"
                     fontFamily="Vazirmatn"
                     textAnchor="middle"
-                    className="select-none pointer-events-none font-medium"
+                    className="select-none pointer-events-none font-bold"
                   >
                     {link.labelFa}
                   </text>
@@ -241,7 +240,7 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
                       r={isMainDrug ? 32 : 24}
                       fill="none"
                       stroke={node.color}
-                      strokeWidth="3"
+                      strokeWidth="2.5"
                       strokeDasharray="4 2"
                       className="animate-spin"
                       style={{ animationDuration: '8s' }}
@@ -250,17 +249,17 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
 
                   <circle
                     r={isMainDrug ? 26 : 18}
-                    fill="#090d16"
-                    stroke={node.color || '#38bdf8'}
+                    fill="#ffffff"
+                    stroke={node.color || '#0891b2'}
                     strokeWidth={isSelected ? 3 : 2}
-                    className="transition-all group-hover:scale-110 shadow-lg"
+                    className="transition-all group-hover:scale-110 shadow-md"
                   />
 
                   {/* Icon or Symbol */}
                   <text
                     textAnchor="middle"
                     dominantBaseline="central"
-                    fill={node.color || '#fff'}
+                    fill={node.color || '#0f172a'}
                     fontSize={isMainDrug ? '12' : '9'}
                     fontFamily="JetBrains Mono"
                     fontWeight="bold"
@@ -281,11 +280,11 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
                   <text
                     y={isMainDrug ? 36 : 28}
                     textAnchor="middle"
-                    fill="#f1f5f9"
+                    fill="#1e293b"
                     fontSize="11"
                     fontFamily="Vazirmatn"
-                    fontWeight={isSelected ? 'bold' : 'normal'}
-                    className="pointer-events-none select-none shadow-sm"
+                    fontWeight={isSelected ? 'bold' : '500'}
+                    className="pointer-events-none select-none"
                   >
                     {node.label}
                   </text>
@@ -296,21 +295,19 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
         </div>
 
         {/* Node Inspector Drawer */}
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-800">
-              <span className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="flex items-center justify-between pb-2 mb-3 border-b border-slate-200">
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <Info className="w-3.5 h-3.5 text-cyan-600" />
                 <span>مشخصات گره انتخاب‌شده</span>
               </span>
               {selectedNode && (
                 <span
-                  className="text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase"
+                  className="text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase border bg-white"
                   style={{
-                    backgroundColor: `${selectedNode.color}22`,
                     color: selectedNode.color,
-                    borderColor: `${selectedNode.color}55`,
-                    borderWidth: '1px',
+                    borderColor: `${selectedNode.color}66`,
                   }}
                 >
                   {selectedNode.type}
@@ -321,77 +318,77 @@ export const KnowledgeGraphView: React.FC<KnowledgeGraphViewProps> = ({ graph, d
             {selectedNode ? (
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[11px]">عنوان:</span>
-                  <div className="font-bold text-sm text-white mt-0.5">{selectedNode.label}</div>
+                  <span className="text-slate-500 block text-[11px] font-medium">عنوان موجودیت:</span>
+                  <div className="font-bold text-sm text-slate-900 mt-0.5">{selectedNode.label}</div>
                 </div>
 
                 {selectedNode.type === 'drug' && (
-                  <div className="space-y-1.5 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
+                  <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-slate-200">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">نام فارسی:</span>
-                      <span className="text-slate-200">{drug.persianName}</span>
+                      <span className="text-slate-500">نام فارسی:</span>
+                      <span className="text-slate-800 font-semibold">{drug.persianName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">رده LiverTox:</span>
-                      <span className="font-mono text-rose-300 font-bold">
+                      <span className="text-slate-500">رده LiverTox:</span>
+                      <span className="font-mono text-rose-700 font-bold">
                         {drug.livertoxCategory} ({drug.internalCode})
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">شناسه PubChem:</span>
-                      <span className="font-mono text-cyan-300">{drug.pubchemCid || 'ندارد'}</span>
+                      <span className="text-slate-500">شناسه PubChem:</span>
+                      <span className="font-mono text-cyan-700 font-bold">{drug.pubchemCid || 'ندارد'}</span>
                     </div>
                   </div>
                 )}
 
                 {selectedNode.type === 'drug_class' && (
-                  <div className="space-y-1.5 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
-                    <span className="text-slate-400 block text-[11px]">نام فارسی گروه:</span>
-                    <span className="text-slate-200 font-medium">
+                  <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 block text-[11px]">نام فارسی گروه:</span>
+                    <span className="text-slate-900 font-bold">
                       {selectedNode.details?.classNameFa}
                     </span>
                   </div>
                 )}
 
                 {selectedNode.type === 'evidence_document' && (
-                  <div className="space-y-2 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
+                  <div className="space-y-2 bg-white p-2.5 rounded-lg border border-slate-200">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">مرجع:</span>
-                      <span className="font-mono text-teal-300 font-semibold">
+                      <span className="text-slate-500">مرجع:</span>
+                      <span className="font-mono text-teal-700 font-bold">
                         {selectedNode.details?.source}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-300 leading-snug">
+                    <p className="text-[11px] text-slate-700 leading-snug">
                       {selectedNode.details?.excerptFa}
                     </p>
                   </div>
                 )}
 
                 {selectedNode.type === 'clinical_case' && (
-                  <div className="space-y-1.5 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80">
+                  <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-slate-200">
                     <div className="flex justify-between">
-                      <span className="text-slate-400">سن و جنس:</span>
-                      <span className="text-slate-200">
+                      <span className="text-slate-500">سن و جنس:</span>
+                      <span className="text-slate-800 font-semibold">
                         {selectedNode.details?.age} سال ({selectedNode.details?.gender})
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-400">پیامد بالینی:</span>
-                      <span className="text-rose-400 font-bold">{selectedNode.details?.outcome}</span>
+                      <span className="text-slate-500">پیامد بالینی:</span>
+                      <span className="text-rose-700 font-bold">{selectedNode.details?.outcome}</span>
                     </div>
-                    <p className="text-[11px] text-slate-300 mt-1">
+                    <p className="text-[11px] text-slate-700 mt-1 font-medium">
                       {selectedNode.details?.summaryFa}
                     </p>
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-xs text-slate-500">روی یکی از گره‌های گراف کلیک کنید.</p>
+              <p className="text-xs text-slate-400">روی یکی از گره‌های گراف کلیک کنید.</p>
             )}
           </div>
 
-          <div className="pt-3 border-t border-slate-800/80 text-[10px] text-slate-500">
-            سازگار با انطباق Neo4j / PostgreSQL Graph Schema
+          <div className="pt-3 border-t border-slate-200 text-[10px] text-slate-500">
+            انطباق با استانداردهای داده‌ای Neo4j و گراف‌های Pharma.AI
           </div>
         </div>
       </div>
