@@ -1,0 +1,6 @@
+{
+  "name": "هوش‌دارو | DILI Navigator",
+  "description": "سامانه جامع پشتیبان تصمیم‌گیری بالینی ارزیابی آسیب کبدی دارویی بر اساس شواهد LiverTox، الگوی R-ratio، معیار Hy's Law، امتیازدهی RUCAM و گراف دانش",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
